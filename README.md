@@ -4,7 +4,7 @@
 
 ## Membership website
 
-The beginnings of a membership website for the Hackerspace in Adelaide.
+This is the beginnings of a membership website.
 
 Stay tuned.
 
