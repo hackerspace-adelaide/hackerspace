@@ -45,6 +45,9 @@ end
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
+  gem 'rvm1-capistrano3', require: false
+  # Use Capistrano for deployment
+  gem 'capistrano', '~> 3.2.0'
 end
 
 # User authentication via Devise https://github.com/plataformatec/devise
@@ -68,8 +71,6 @@ gem 'bootstrap-generators', '~> 3.0'
 # Use unicorn as the app server
 # gem 'unicorn'
 
-# Use Capistrano for deployment
-# gem 'capistrano', group: :development
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
