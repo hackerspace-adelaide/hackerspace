@@ -21,8 +21,10 @@
 
 # Ignore .rvmrc and ruby version
 .rvmrc
-.ruby-version
 .ruby-gemset
+
+# but keep .ruby-version for deployment
+#.ruby-version
 
 # Ignore application configuration
 /config/application.yml
