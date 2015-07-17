@@ -1,5 +1,7 @@
 Hackerspace::Application.routes.draw do
 
+  resources :checkins
+
   resource :payment_notifications, :only => [:create]
   
   resources :memberships do
@@ -13,8 +15,14 @@ Hackerspace::Application.routes.draw do
   devise_for :users, :controllers => { :registrations => "registrations" }
 
   resources :users, :only => [:show]
+
+  post 'lookup' => 'users#lookup'
+  post 'checkin' => 'users#checkin'
+
+  get 'who' => 'home#who'
   
   get "home/index"
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
