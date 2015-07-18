@@ -11,75 +11,83 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131030083422) do
+ActiveRecord::Schema.define(version: 20150318083349) do
 
-  create_table "memberships", force: true do |t|
-    t.integer  "user_id"
+  create_table "checkins", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  create_table "memberships", force: :cascade do |t|
+    t.integer  "user_id",                  limit: 4
     t.datetime "valid_from"
-    t.integer  "duration"
+    t.integer  "duration",                 limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "express_token"
-    t.string   "express_payer_id"
+    t.string   "express_token",            limit: 255
+    t.string   "express_payer_id",         limit: 255
     t.datetime "purchase_date"
-    t.string   "paypal_payer_id"
-    t.string   "paypal_email"
-    t.string   "paypal_first_name"
-    t.string   "paypal_last_name"
-    t.string   "paypal_profile_id"
-    t.string   "paypal_street1"
-    t.string   "paypal_street2"
-    t.string   "paypal_city_name"
-    t.string   "paypal_state_or_province"
-    t.string   "paypal_country_name"
-    t.string   "paypal_country_code"
-    t.string   "paypal_postal_code"
-    t.integer  "price_paid"
-    t.boolean  "concession"
-    t.integer  "refund"
+    t.string   "paypal_payer_id",          limit: 255
+    t.string   "paypal_email",             limit: 255
+    t.string   "paypal_first_name",        limit: 255
+    t.string   "paypal_last_name",         limit: 255
+    t.string   "paypal_profile_id",        limit: 255
+    t.string   "paypal_street1",           limit: 255
+    t.string   "paypal_street2",           limit: 255
+    t.string   "paypal_city_name",         limit: 255
+    t.string   "paypal_state_or_province", limit: 255
+    t.string   "paypal_country_name",      limit: 255
+    t.string   "paypal_country_code",      limit: 255
+    t.string   "paypal_postal_code",       limit: 255
+    t.integer  "price_paid",               limit: 4
+    t.boolean  "concession",               limit: 1
+    t.integer  "refund",                   limit: 4
     t.datetime "cancellation_date"
   end
 
-  create_table "pages", force: true do |t|
-    t.string   "title"
-    t.string   "permalink"
-    t.text     "body"
+  create_table "pages", force: :cascade do |t|
+    t.string   "title",      limit: 255
+    t.string   "permalink",  limit: 255
+    t.text     "body",       limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "pages", ["permalink"], name: "index_pages_on_permalink"
+  add_index "pages", ["permalink"], name: "index_pages_on_permalink", using: :btree
 
-  create_table "payment_notifications", force: true do |t|
-    t.text     "params"
-    t.string   "status"
-    t.string   "transaction_id"
-    t.string   "transaction_type"
-    t.integer  "user_id"
+  create_table "payment_notifications", force: :cascade do |t|
+    t.text     "params",           limit: 65535
+    t.string   "status",           limit: 255
+    t.string   "transaction_id",   limit: 255
+    t.string   "transaction_type", limit: 255
+    t.integer  "user_id",          limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "users", force: true do |t|
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
-    t.string   "reset_password_token"
+  create_table "users", force: :cascade do |t|
+    t.string   "email",                  limit: 255,   default: "", null: false
+    t.string   "encrypted_password",     limit: 255,   default: "", null: false
+    t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",          limit: 4,     default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
+    t.string   "current_sign_in_ip",     limit: 255
+    t.string   "last_sign_in_ip",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "username"
-    t.boolean  "admin"
-    t.text     "website"
-    t.text     "about"
+    t.string   "username",               limit: 255
+    t.boolean  "admin",                  limit: 1
+    t.text     "website",                limit: 65535
+    t.text     "about",                  limit: 65535
+    t.binary   "nfc_atr",                limit: 65535
+    t.binary   "nfc_id",                 limit: 65535
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
 end

@@ -11,7 +11,8 @@ module ApplicationHelper
 			when :notice
 				"alert-info"
 			else
-				flash_type.to_s
+				# flash_type.to_s
+				"alert-info"
 		end
 	end
 	
@@ -31,6 +32,19 @@ module ApplicationHelper
 				table += "<td>#{membership.price_paid ? "$#{number_with_precision((membership.price_paid / 100), :precision => 2)}" : "Free"}</td>"
 				# table += "<td>#{membership.refund ? "$#{cents_to_dollars(membership.refund)}" : ""}</td>"
 				# table += "<td>#{membership.refunded_on ? "#{membership.refunded_on.try(:strftime,"%d %B, %Y")} #{link_to('Undo?', admin_membership_path(membership), :method => :put, :class => 'btn btn-mini btn-success', :confirm => 'Are you sure you want to undo marking it refunded?')}" : "#{link_to('Refunded', admin_membership_path(membership), :method => :put, :class => 'btn btn-mini btn-danger', :confirm => 'Are you sure you want to mark this refund as paid?')}" }</td></tr>"
+			end
+			table += "</tbody></table>"
+			return raw table
+		end
+	end
+
+	def checkins_as_table(checkins)
+		if checkins.try(:empty?)
+			return "You haven't checked in yet!"
+		else
+			table = "<table class='table table-bordered purchases_as_table'><thead><tr><th>Checkin date</th></tr></thead><tbody>"
+			for checkin in checkins.reverse do
+				table += "<tr><td>#{link_to checkin.created_at.try(:strftime,"%d %B, %Y"), checkin_path(checkin)}</td>"
 			end
 			table += "</tbody></table>"
 			return raw table

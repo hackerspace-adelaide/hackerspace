@@ -1,10 +1,18 @@
 source 'https://rubygems.org'
 
+ruby "2.2.2"
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.0'
+gem 'rails', '4.2.2'
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
+
+# To dump sqlite to mysql
+gem 'yaml_db'
+
+# Mysql
+gem 'mysql2'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
@@ -13,11 +21,12 @@ gem 'sass-rails', '~> 4.0.0'
 gem 'uglifier', '>= 1.3.0'
 
 # Use CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails', '~> 4.0.0'
+gem 'coffee-rails', '>= 4.0.0'
 
 # Twitter Bootstrap 3
 # https://github.com/anjlab/bootstrap-rails
-gem 'anjlab-bootstrap-rails', :require => 'bootstrap-rails', :github => 'anjlab/bootstrap-rails'
+# gem 'anjlab-bootstrap-rails', :require => 'bootstrap-rails', :github => 'anjlab/bootstrap-rails'
+gem 'bootstrap-sass', '~> 3.3.3'
 
 # Active Merchant for PayPal payments
 gem 'activemerchant'
@@ -26,7 +35,7 @@ gem 'activemerchant'
 gem 'paypal-recurring'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
+gem 'therubyracer', platforms: :ruby
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
