@@ -4,6 +4,8 @@ lock '3.2.1'
 set :application, 'hackadl_members'
 set :repo_url, 'git@github.com:hackerspace-adelaide/member-website.git'
 
+set :rvm1_ruby_version, "2.2.2@rails4"
+
 # Default branch is :master
 set :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 
