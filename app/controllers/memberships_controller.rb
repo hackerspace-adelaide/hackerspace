@@ -25,6 +25,9 @@ class MembershipsController < ApplicationController
       @express_purchase_membership_duration = 12
     elsif params[:three_month]
       @express_purchase_membership_duration = 3
+    elsif params[:single_pass]
+      session[:single_pass] = true
+      @express_purchase_membership_duration = 1
     end
 
     if params[:concession] == "1"
@@ -70,12 +73,22 @@ class MembershipsController < ApplicationController
       end
       session[:express_purchase_description] = payment_description
 
+      @express_purchase_name = "#{session[:express_purchase_membership_duration]} month Hackerspace Adelaide membership."
+
+      if params[:single_pass]
+        payment_description = "Hackerspace Adelaide day pass to cover consumables."
+        @express_purchase_name = "#{session[:express_purchase_membership_duration]} day pass to Hackerspace Adelaide."
+      end
+
       response = EXPRESS_GATEWAY.setup_purchase(@express_purchase_price,
         :ip                 => request.remote_ip,
         :return_url         => new_membership_url,
         :cancel_return_url  => new_membership_url,
         :allow_note         => true,
-        :items              => [{:name => "#{session[:express_purchase_membership_duration]} month Hackerspace Adelaide membership.", :quantity => 1, :description => payment_description, :amount => session[:express_purchase_price]}],
+        :items              => [{
+          :name => @express_purchase_name, 
+          :quantity => 1, 
+          :description => payment_description, :amount => session[:express_purchase_price]}],
         :currency           => 'AUD'
       )
       logger.info "XXXXXXXXXXXX"
@@ -102,24 +115,19 @@ class MembershipsController < ApplicationController
 
     @user = current_user
 
-    if @user.is_admin?
-      # Let admins create memberships manually
-      @membership = Membership.new
+    # Pay via PayPal
+    @membership = Membership.new
+    @express_token = params[:token]
+    @express_payer_id = params[:PayerID]
+
+    @has_token = not(@express_token.blank? or @express_payer_id.blank?)
+
+    if @has_token
+      retrieve_paypal_express_details(@express_token, {autodebit: session[:express_autodebit]})
+      session[:express_token] = @express_token
+      session[:express_payer_id] = @express_payer_id
     else
-      # Pay via PayPal
-      @membership = Membership.new
-      @express_token = params[:token]
-      @express_payer_id = params[:PayerID]
-
-      @has_token = not(@express_token.blank? or @express_payer_id.blank?)
-
-      if @has_token
-          retrieve_paypal_express_details(@express_token, {autodebit: session[:express_autodebit]})
-          session[:express_token] = @express_token
-          session[:express_payer_id] = @express_payer_id
-      else
-          logger.info "*** No token. ***"
-      end
+      logger.info "*** No token. ***"
     end
   end
 
@@ -135,10 +143,11 @@ class MembershipsController < ApplicationController
   def create
 
     @user = current_user
-    if @user.is_admin?
+    if @user.is_admin? and not session[:express_token]
       # Make a new membership.
       @membership = Membership.new(membership_params)
       @membership.purchase_date = DateTime.now
+      payment_complete = true
     else
       # Do the PayPal purchase
       payment_complete = false
@@ -309,7 +318,7 @@ class MembershipsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def membership_params
-      params.require(:membership).permit(:user_id, :valid_from, :duration, :purchase_date, :cancellation_date, :refund)
+      params.require(:membership).permit(:user_id, :valid_from, :duration, :purchase_date, :cancellation_date, :refund, :price_paid)
     end
 
     def cancel_recurring_membership

@@ -80,7 +80,7 @@ private
 	end
 
 	def renew_membership(first_recurring_membership)
-		@membership = membership.create(
+		@membership = Membership.create(
 			:paypal_profile_id => params["recurring_payment_id"],
 			:paypal_payer_id => params["payer_id"],
 			:paypal_email => params["payer_email"],
@@ -90,7 +90,7 @@ private
 			:user_id => @user.id, 
 			:valid_from => (@user.last_membership.try("expiry_date") or DateTime.now), 
 			:duration => first_recurring_membership.duration,
-			:paper_copy => first_recurring_membership.paper_copy,
+			# :paper_copy => first_recurring_membership.paper_copy,
 			:purchase_date => DateTime.now
 		)
 		if @membership.save

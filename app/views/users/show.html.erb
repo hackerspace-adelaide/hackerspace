@@ -22,7 +22,7 @@
 	<% if current_user and ((current_user == @user) or (current_user.is_admin?)) %>
 		<dt><strong>Account type:</strong></dt>
 		<dd><%= @user.user_type %></dd>
-		<% if @user.has_membership? || @user.membership_lapsed? || @user.user_type == "Admin" %>
+		<% if @user.has_membership? || @user.has_daypass? || @user.membership_lapsed? || @user.user_type == "Admin" %>
 			<dt><strong>Expiry date:</strong></dt>
 			<dd><% begin %>
 				<%= @user.expiry_date.strftime("%e %B, %Y") %>
@@ -45,7 +45,7 @@
 		<dd><%= link_to "Renew my membership", memberships_path, :class => 'btn btn-success' %></dd>
 		<% else %>
 		<dt></dt>
-		<dd><%= link_to "Subscribe", memberships_path, :class => 'btn btn-success' %></dd>
+		<dd><%= link_to "Buy a membership", memberships_path, :class => 'btn btn-success' %></dd>
 		<% end %>
 	<% end %>
 </dl>

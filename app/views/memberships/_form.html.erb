@@ -1,4 +1,4 @@
-<% if @user.is_admin? %>
+<% if @user.is_admin? and not @has_token %>
 
   <%= form_for(@membership, :html => { :class => "form-horizontal" }) do |f| %>
     <% if @membership.errors.any? %>
@@ -27,9 +27,15 @@
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :duration, :class => "col-lg-2 control-label" %>
+      <%= f.label :duration, "Duration (in months)", :class => "col-lg-2 control-label" %>
       <div class="col-lg-10">
         <%= f.number_field :duration, :class => "form-control" %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :price_paid, "Price paid (in cents)", :class => "col-lg-2 control-label" %>
+      <div class="col-lg-10">
+        <%= f.number_field :price_paid, :class => "form-control" %>
       </div>
     </div>
     <div class="form-group">
@@ -79,8 +85,13 @@
       <dd><%= session[:express_purchase_membership_duration] %> months</dd>
       <dt><strong>Debit amount:</strong></dt>
       <dd>$<%= number_with_precision((session[:express_purchase_price] / 100), :precision => 2) %></dd>
+    <% elsif session[:single_pass] %>
+      <dt><strong>Pass:</strong></dt>
+      <dd><%= session[:express_purchase_membership_duration] %> day</dd>
+      <dt><strong>Amount:</strong></dt>
+      <dd>$<%= number_with_precision((session[:express_purchase_price] / 100), :precision => 2) %></dd>
     <% else %>
-      <dt><strong>membership:</strong></dt>
+      <dt><strong>Membership:</strong></dt>
       <dd><%= session[:express_purchase_membership_duration] %> months</dd>
       <dt><strong>Amount:</strong></dt>
       <dd>$<%= number_with_precision((session[:express_purchase_price] / 100), :precision => 2) %></dd>

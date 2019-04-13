@@ -15,6 +15,21 @@ class User < ActiveRecord::Base
   has_many :memberships
   has_many :checkins
 
+  # Send a welcome email after a user is created
+  after_create :send_welcome_mail
+
+  def send_welcome_mail
+    if Rails.env.production?
+      begin
+        UserMailer.user_signup_confirmation(self).deliver
+      rescue Exception
+        logger.error "Email server is down..."
+      end
+    else
+      logger.info "SEND_WELCOME_MAIL would happen on production."
+    end
+  end
+
   # Virtual attribute for authenticating by either username or email
   # This is in addition to a real persisted field like 'username'
   attr_accessor :login
@@ -24,6 +39,7 @@ class User < ActiveRecord::Base
     if login = conditions.delete(:login)
       where(conditions).where(["lower(username) = :value OR lower(email) = :value", { :value => login.downcase }]).first
     else
+      conditions.permit! if conditions.class.to_s == "ActionController::Parameters"
       where(conditions).first
     end
   end
@@ -38,7 +54,11 @@ class User < ActiveRecord::Base
   end
 
   def has_membership?
-  	return membership_valid?
+  	return (membership_valid? and not has_daypass?)
+  end
+
+  def has_daypass?
+    return self.memberships.collect{|s| s.is_daypass?}.include?(true)
   end
 
   def membership_valid?
@@ -88,6 +108,8 @@ class User < ActiveRecord::Base
       t = "Admin"
     elsif has_membership?
       t = "Member"
+    elsif has_daypass?
+      t = "Day pass"
     end
     "#{t}"
   end
